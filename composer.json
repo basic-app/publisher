@@ -1,0 +1,13 @@
+{
+    "name": "basic-app/publisher",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "BasicApp\\Publisher\\": ""
+        }
+    },
+    "require": {
+        "basic-app/event": "*",
+        "basic-app/command": "*"
+    }
+}
