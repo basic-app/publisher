@@ -11,6 +11,8 @@ use Psr\Log\LoggerInterface;
 interface OperationInterface
 {
 
+    public function throwException(string $message, array $context = []);
+
     public function run(LoggerInterface $logger);
 
 }

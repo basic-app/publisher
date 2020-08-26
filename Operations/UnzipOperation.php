@@ -6,14 +6,11 @@
  */
 namespace BasicApp\Publisher\Operations;
 
-use BasicApp\Publisher\PublisherException;
 use ZipArchive;
 use Psr\Log\LoggerInterface;
 
 class UnzipOperation extends \BasicApp\Publisher\BaseOperation
 {
-
-    const MESSAGE = '{zipFile} is extracted to {targetDirectory}.';
 
     public $zipFile;
 
@@ -36,27 +33,36 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
     {
         if (!is_file($this->zipFile))
         {
-            throw new PublisherException('File not found: ' . $this->zipFile);
+            $this->throwException('{zipFile} is not found.', [
+                'zipFile' => $this->zipFile
+            ]);
         }
 
         $zip = new ZipArchive;
         
         if ($zip->open($this->zipFile) !== true)
         {
-            throw new PublisherException('Can\'t open zip file: ' . $this->zipFile);
+            $this->throwException('{zipFile} open error.', [
+                'zipFile' => $this->zipFile
+            ]);
         }
 
         if (!$zip->extractTo($this->targetDirectory, $this->entries))
         {
-            throw new PublisherException('Can\'t extract zip file "' . $this->zipFile . '" to "' . $this->targetDirectory . '".');
+            $this->throwException('{zipFile} extract to {targetDirectory} error.', [
+                'zipFile' => $this->zipFile,
+                'targetDirectory' => $this->targetDirectory
+            ]);
         }
         
         if (!$zip->close())
         {
-            throw new PublisherException('Can\'t close zip file: ' . $this->zipFile);
+            $this->throwException('{zipFile} close error.', [
+                'zipFile' => $this->zipFile
+            ]);
         }
 
-        $logger->info(static::MESSAGE, [
+        $logger->info('{zipFile} is extracted to {targetDirectory}.', [
             'zipFile' => $this->zipFile,
             'targetDirectory' => $this->targetDirectory,
             'entries' => $this->entries
