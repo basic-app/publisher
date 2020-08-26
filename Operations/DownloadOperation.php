@@ -13,8 +13,6 @@ use Psr\Log\LoggerInterface;
 class OperationOperation extends \BasicApp\Publisher\BaseOperation
 {
 
-    const MESSAGE = '{sourceFile} is downloaded to {targetFile}.';
-
     public $sourceUrl;
 
     public $targetFile;
@@ -43,7 +41,7 @@ class OperationOperation extends \BasicApp\Publisher\BaseOperation
 
         service('curl')->download($this->sourceUrl, $this->targetFile, $this->curlOptions);
 
-        $logger->info(static::MESSAGE, [
+        $logger->info('{sourceFile} is downloaded to {targetFile}.', [
             'sourceUrl' => $this->sourceUrl,
             'targetFile' => $this->targetFile,
             'curlOptions' => $this->curlOptions
