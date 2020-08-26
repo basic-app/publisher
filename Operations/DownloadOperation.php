@@ -6,7 +6,6 @@
  */
 namespace BasicApp\Publisher\Operations;
 
-use BasicApp\Publisher\PublisherException;
 use ZipArchive;
 use Psr\Log\LoggerInterface;
 
