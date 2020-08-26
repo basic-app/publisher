@@ -7,18 +7,33 @@
 namespace BasicApp\Publisher\Events;
 
 use Closure;
+use BasicApp\Publisher\Operations\UnzipOperation;
+use BasicApp\Publisher\Operations\DownloadOperation;
 
 class PublishEvent extends \BasicApp\Event\BaseEvent
 {
 
-    const DELETE_DIRECTORY = 'DELETE_DIRECTORY';
-    const DELETE_FILE = 'DELETE_FILE';
-    const DOWNLOAD = 'DOWNLOAD';
-    const UNZIP = 'UNZIP';
-    const COPY_DIRECTORY = 'COPY_DIRECTORY';
-    const COPY_FILE = 'COPY_FILE';
-    const DIRECTORY_PERMISSIONS = 'DIRECTORY_PERMISSIONS';
-    const FILE_PERMISSIONS = 'FILE_PERMISSIONS';
+    //const DELETE_DIRECTORY = 'DELETE_DIRECTORY';
+
+    //const DELETE_FILE = 'DELETE_FILE';
+
+    //const DOWNLOAD = 'DOWNLOAD';
+
+    //const UNZIP = 'UNZIP';
+
+    //const COPY_DIRECTORY = 'COPY_DIRECTORY';
+
+    //const COPY_FILE = 'COPY_FILE';
+
+    //const DIRECTORY_PERMISSIONS = 'DIRECTORY_PERMISSIONS';
+
+    //const FILE_PERMISSIONS = 'FILE_PERMISSIONS';
+
+    public $refresh = false;
+
+    public $operations = [];
+
+    /*
 
     protected $_config = [
         self::DELETE_DIRECTORY => [],
@@ -32,16 +47,14 @@ class PublishEvent extends \BasicApp\Event\BaseEvent
         self::BEFORE_PUBLISH => [],
         self::AFTER_PUBLISH => []
     ];
+    */
 
     public function __construct(array $config = [])
     {
         parent::__construct();
-    }
+    }   
 
-    public function toArray() : array
-    {
-        return $this->_config;
-    }    
+    /*
 
     public function copyDirectory($source, $target, $recursive = true, $overwrite = true, $permissions = null)
     {
@@ -97,28 +110,23 @@ class PublishEvent extends \BasicApp\Event\BaseEvent
         ];        
     }
 
-    public function download($url, $overwrite = true)
-    {
-        $this->_config[static::DOWNLOAD][] = [
-            'url' => $url,
-            'overwrite' => $overwrite
-        ];        
-    }
-
-    public function unzip($file, $target, $overwrite = true)
-    {
-        $this->_config[static::UNZIP][] = [
-            'file' => $file,
-            'target' => $target, 
-            'overwrite' => $overwrite
-        ];
-    }
-
     public function deleteFile($path)
     {
         $this->_config[static::DELETE_FILE][] = [
             'path' => $path
         ];
     }   
+
+    */
+
+    public function download(string $sourceUrl, string $targetFile, array $curlOptions = [])
+    {
+        $this->operations[] = new DownloadOperation($sourceUrl, $targetFile, $curlOptions);
+    }
+
+    public function unzip(string $sourceFile, string $targetDirectory, array $entries = [])
+    {
+        $this->operations[] = new UnzipOperation($sourceFile, $targetDirectory, $entries);
+    }
 
 }

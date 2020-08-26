@@ -6,6 +6,7 @@
  */
 namespace BasicApp\Publisher\Commands;
 
+use Exception;
 use BasicApp\Publisher\PublisherEvents;
 use BasicApp\Publisher\Events\PublishEvent;
 
@@ -32,7 +33,7 @@ class Publish extends \BasicApp\Command\BaseCommand
      *
      * @var string
      */
-    protected $description = 'Publish assets.';
+    protected $description = 'Publish vendor assets.';
 
     /**
      * the Command's usage
@@ -43,91 +44,18 @@ class Publish extends \BasicApp\Command\BaseCommand
 
     public function run(array $params)
     {
-        $config = PublisherEvents::publish();
+        $refresh = false;
 
-        $config = PublisherEvents::beforePublish($config);
+        $event = PublisherEvents::publish($refresh);
 
-        foreach($config[PublishEvent::DELETE_DIRECTORY] as $row)
+        PublisherEvents::beforePublish($event);
+
+        foreach($event->operations as $operation)
         {
-            $this->deleteDirectory($row);
+            $operation->run();
         }
 
-        foreach($config[PublishEvent::DELETE_FILE] as $row)
-        {
-            $this->deleteFile($row);
-        }        
-
-        foreach($config[PublishEvent::DOWNLOAD] as $row)
-        {
-            $this->download($row);
-        }
-
-        foreach($config[PublishEvent::UNZIP] as $row)
-        {
-            $this->unzip($row);
-        }
-
-        foreach($config[PublishEvent::COPY_DIRECTORY] as $row)
-        {
-            $this->copyDirectory($row);
-        }
-
-        foreach($config[PublishEvent::COPY_FILE] as $row)
-        {
-            $this->copyFile($row);
-        }
-
-        foreach($config[PublishEvent::DIRECTORY_PERMISSIONS] as $row)
-        {
-            $this->directoryPermissions($row);
-        }
-
-        foreach($config[PublishEvent::FILE_PERMISSIONS] as $row)
-        {
-            $this->filePermissions($row);
-        }
-
-        PublisherEvents::afterPublish($config);
-    }
-
-    public function deleteFile(array $config = [])
-    {
-        extract($config);
-    }
-
-    public function deleteDirectory(array $config = [])
-    {
-        extract($config);
-    }
-
-    public function copyFile(array $config = [])
-    {
-        extract($config);
-    }
-
-    public function download(array $config = [])
-    {
-        extract($config);
-    }
-
-    public function unzip(array $config = [])
-    {
-        extract($config);
-    }
-
-    public function copyDirectory(array $config = [])
-    {
-        extract($config);
-    }
-
-    public function filePermissions(array $config = [])
-    {
-        extract($config);
-    }
-
-    public function directoryPermissions(array $config = [])
-    {
-        extract($config);
+        PublisherEvents::afterPublish($event);
     }
 
 }
