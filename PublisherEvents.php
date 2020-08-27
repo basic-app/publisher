@@ -61,4 +61,5 @@ class PublisherEvents
     {
         static::on(static::EVENT_AFTER_PUBLISH, $callback);
     }    
+
 }

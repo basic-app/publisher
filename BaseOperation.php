@@ -6,23 +6,26 @@
  */
 namespace BasicApp\Publisher;
 
-use BasicApp\Publisher\PublisherException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerTrait;
+use Psr\Log\LoggerAwareTrait;
 
 abstract class BaseOperation implements OperationInterface
 {
 
-    abstract public function run();
+    use LoggerAwareTrait;
+    use LoggerTrait;
 
-    public function throwException(string $message, array $context = [])
+    public function __construct(LoggerInterface $logger)
     {
-        $replace = [];
-
-        foreach($context as $key => $value)
-        {
-            $replace['{' . $key . '}'] = $value;
-        }
-
-        throw new PublisherException(strtr($message, $replace));
+        $this->setLogger($logger);
     }
+
+    public function log($level, $message, array $context = array())
+    {
+        $this->logger->log($level, $message, $context);
+    }
+
+    abstract public function run();
 
 }

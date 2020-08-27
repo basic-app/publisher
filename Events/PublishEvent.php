@@ -7,126 +7,68 @@
 namespace BasicApp\Publisher\Events;
 
 use Closure;
+use Psr\Log\LoggerInterface;
+use BasicApp\OperationInterface;
 use BasicApp\Publisher\Operations\UnzipOperation;
 use BasicApp\Publisher\Operations\DownloadOperation;
+use BasicApp\Publisher\Operations\SetPermissionsOperation;
+use BasicApp\Publisher\Operations\DeleteOperation;
+use BasicApp\Publisher\Operations\CopyOperation;
 
 class PublishEvent extends \BasicApp\Event\BaseEvent
 {
 
-    //const DELETE_DIRECTORY = 'DELETE_DIRECTORY';
-
-    //const DELETE_FILE = 'DELETE_FILE';
-
-    //const DOWNLOAD = 'DOWNLOAD';
-
-    //const UNZIP = 'UNZIP';
-
-    //const COPY_DIRECTORY = 'COPY_DIRECTORY';
-
-    //const COPY_FILE = 'COPY_FILE';
-
-    //const DIRECTORY_PERMISSIONS = 'DIRECTORY_PERMISSIONS';
-
-    //const FILE_PERMISSIONS = 'FILE_PERMISSIONS';
-
     public $refresh = false;
 
-    public $operations = [];
+    protected $_operations = [];
 
-    /*
-
-    protected $_config = [
-        self::DELETE_DIRECTORY => [],
-        self::DELETE_FILE => [],
-        self::DOWNLOAD => [],
-        self::UNZIP => [],
-        self::COPY_DIRECTORY => [],
-        self::COPY_FILE => [],
-        self::DIRECTORY_PERMISSIONS => [],
-        self::FILE_PERMISSIONS => [],
-        self::BEFORE_PUBLISH => [],
-        self::AFTER_PUBLISH => []
-    ];
-    */
+    protected $_logger;
 
     public function __construct(array $config = [])
     {
         parent::__construct();
-    }   
-
-    /*
-
-    public function copyDirectory($source, $target, $recursive = true, $overwrite = true, $permissions = null)
-    {
-        $this->_config[static::COPY_DIRECTORY][] = [
-            'source' => $source,
-            'target' => $target,
-            'recursive' => $recursive,
-            'permissions' => $permissions,
-            'overwrite' => $overwrite
-        ];
     }
 
-    public function copyFile($source, $target, $overwrite = true, $permissions = null)
+    public function createOperation(string $class, array $params = [])
     {
-        $this->_config[static::COPY_FILE][] = [
-            'source' => $source,
-            'target' => $target,
-            'permissions' => $permissions,
-            'overwrite' => $overwrite
-        ];
+        return new $class($this->logger, ...array_values($params));
+    }    
+
+    public function addOperation(OperationInterface $operation)
+    {
+        $this->_operations[] = $operation
+
+        return $operation;
     }
 
-    public function filePermissions($path, $permisions, $recursive = false)
+    public function getOperations()
     {
-        $this->_config[static::FILE_PERMISSIONS][] = [
-            'path' => $path,
-            'permission' => $permissions,
-            'recursive' => $recursive
-        ];    
+        return $this->_operations;
     }
 
-    public function directoryPermissions($path, $permisions, bool $recursive = false)
+    public function unzip(...$args) : UnzipOperation
     {
-        $this->_config[static::DIRECTORY_PERMISSIONS][] = [
-            'path' => $path,
-            'permission' => $permissions,
-            'recursive' => $recursive
-        ];
+        return $this->addOperation($this->createOperation(UnzipOperation::class, ...$args));
     }
 
-    public function deleteDirectory($path, $keepRootDirectory = false)
+    public function download(...$args) : DownloadOperation
     {
-        $this->_config[static::DELETE_DIRECTORY][] = [
-            'path' => $path,
-            'keepRootDirectory' => $keepRootDirectory
-        ];
+        return $this->addOperation($this->createOperation(DownloadOperation::class, ...$args));
     }
 
-    public function deleteFile($path)
+    public function setPermissions(...$args) : SetPermissionsOperation
     {
-        $this->_config[static::DELETE_FILE][] = [
-            'path' => $path
-        ];        
+        return $this->addOperation($this->createOperation(SetPermissionsOperation::class, ...$args));
     }
 
-    public function deleteFile($path)
+    public function delete(...$args) : DeleteOperation
     {
-        $this->_config[static::DELETE_FILE][] = [
-            'path' => $path
-        ];
-    }   
-
-    */
-
-    public function download(string $sourceUrl, string $targetFile, array $curlOptions = [])
-    {
-        $this->operations[] = new DownloadOperation($sourceUrl, $targetFile, $curlOptions);
+        return $this->addOperation($this->createOperation(DeleteOperation::class, ...$args));
     }
 
-    public function unzip(string $sourceFile, string $targetDirectory, array $entries = [])
+    public function copy(...$args) : CopyOperation
     {
-        $this->operations[] = new UnzipOperation($sourceFile, $targetDirectory, $entries);
+        return $this->addOperation($this->createOperation(CopyOperation::class, ...$args));
     }
 
 }

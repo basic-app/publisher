@@ -18,7 +18,7 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
 
     public $entries = [];
 
-    public function __construct(string $zipFile, string $targetDirectory, array $entries = [])
+    public function __construct(LoggerInterface $logger, string $zipFile, string $targetDirectory, array $entries = [])
     {
         parent::__construct();
 
@@ -29,40 +29,48 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
         $this->entries = $entries;
     }
 
-    public function run(LoggerInterface $logger)
+    public function run()
     {
         if (!is_file($this->zipFile))
         {
-            $this->throwException('{zipFile} is not found.', [
+            $this->error('{zipFile} is not found.', [
                 'zipFile' => $this->zipFile
             ]);
+
+            return;
         }
 
         $zip = new ZipArchive;
         
         if ($zip->open($this->zipFile) !== true)
         {
-            $this->throwException('{zipFile} open error.', [
+            $this->error('{zipFile} open error.', [
                 'zipFile' => $this->zipFile
             ]);
+
+            return;
         }
 
         if (!$zip->extractTo($this->targetDirectory, $this->entries))
         {
-            $this->throwException('{zipFile} extract to {targetDirectory} error.', [
+            $this->error('{zipFile} extract to {targetDirectory} error.', [
                 'zipFile' => $this->zipFile,
                 'targetDirectory' => $this->targetDirectory
             ]);
+
+            return;
         }
         
         if (!$zip->close())
         {
-            $this->throwException('{zipFile} close error.', [
+            $this->error('{zipFile} close error.', [
                 'zipFile' => $this->zipFile
             ]);
+
+            return;
         }
 
-        $logger->info('{zipFile} is extracted to {targetDirectory}.', [
+        $this->info('{zipFile} is extracted to {targetDirectory}.', [
             'zipFile' => $this->zipFile,
             'targetDirectory' => $this->targetDirectory,
             'entries' => $this->entries

@@ -9,7 +9,7 @@ namespace BasicApp\Publisher\Operations;
 use ZipArchive;
 use Psr\Log\LoggerInterface;
 
-class OperationOperation extends \BasicApp\Publisher\BaseOperation
+class DownloadOperation extends \BasicApp\Publisher\BaseOperation
 {
 
     public $sourceUrl;
