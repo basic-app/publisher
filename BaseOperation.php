@@ -12,7 +12,9 @@ use Psr\Log\NullLogger;
 abstract class BaseOperation implements OperationInterface
 {
 
-    use LoggerAwareTrait;
+    use LoggerAwareTrait {
+        setLogger as setLoggerTrait;
+    }
 
     public function __construct()
     {
@@ -21,9 +23,18 @@ abstract class BaseOperation implements OperationInterface
 
     abstract public function run();
 
-    protected function pathIsExists(string $path)
+    protected function isExists(string $path)
     {
-        return is_file($path) || is_dir($path) || is_symlink($path);
+        clearstatcache();
+
+        return is_file($path) || is_dir($path) || is_link($path);
+    }
+
+    public function setLogger($logger)
+    {
+        $this->setLoggerTrait($logger);
+
+        return $this;
     }
 
 }

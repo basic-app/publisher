@@ -7,6 +7,7 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\Operations\CopyOperation;
+use BasicApp\Publisher\PublisherLogger;
 
 class Copy extends \BasicApp\Command\BaseCommand
 {
@@ -38,14 +39,15 @@ class Copy extends \BasicApp\Command\BaseCommand
      *
      * @var string
      */
-    protected $usage = 'ba:copy {source} {target} {overwrite}';
+    protected $usage = 'ba:copy [source] [target] [overwrite]';
 
     public function run(array $params)
     {
-        list($source, $target, $overwrite) = $params;
+        $params[0] = $this->rootPath($params[0]);
+        $params[1] = $this->rootPath($params[1]);
 
-        new CopyOperation($source, $target, (bool) $overwrite)
-            ->setLogger(new PublsiherLogger)
+        (new CopyOperation(...$params))
+            ->setLogger(new PublisherLogger)
             ->run();
     }
 

@@ -28,9 +28,9 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
     {
         if (!is_file($this->path) && !is_dir($this->path))
         {
-            if (is_symlimk($this->path))
+            if (is_link($this->path))
             {
-                $this->logger->error('Can not set {permissions} permissions to symlink {path}.', [
+                $this->logger->error('Can\'t set {permissions} permissions to symlink {path}.', [
                     'path' => $this->path,
                     'permissions' => $this->permissions
                 ]);
@@ -38,8 +38,9 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
                 return;
             }
                 
-            $this->logger->error('Can not set permissions {permissions} to {path}. Path not found.', [
-                'path' => $this->path
+            $this->logger->error('Can\'t set permissions {permissions} to {path}. Path not found.', [
+                'path' => $this->path,
+                'permissions' => $this->permissions
             ]);
 
             return;

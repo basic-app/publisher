@@ -7,8 +7,9 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\Operations\UnzipOperation;
+use BasicApp\Publisher\PublisherLogger;
 
-class Copy extends \BasicApp\Command\BaseCommand
+class Unzip extends \BasicApp\Command\BaseCommand
 {
 
     /**
@@ -38,16 +39,21 @@ class Copy extends \BasicApp\Command\BaseCommand
      *
      * @var string
      */
-    protected $usage = 'ba:unzip {source} {target} {entries}';
+    protected $usage = 'ba:unzip [source] [target] [entries]';
 
     public function run(array $params)
     {
-        list($source, $target, $entries) = $params;
+        $params[0] = $this->rootPath($params[0]);
 
-        $entries = exlode(',', $entries);
+        $params[1] = $this->rootPath($params[1]);
 
-        new UnzipOperation($source, $target, $entries)
-            ->setLogger(new PublsiherLogger)
+        if (array_key_exists(2, $params))
+        {
+            $params[3] = exlode(',', $entries);
+        }
+
+        (new UnzipOperation(...$params))
+            ->setLogger(new PublisherLogger)
             ->run();
     }
 

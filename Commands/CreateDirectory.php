@@ -6,10 +6,10 @@
  */
 namespace BasicApp\Publisher\Commands;
 
-use BasicApp\Publisher\Operations\SetPermissionsOperation;
+use BasicApp\Publisher\Operations\CreateDirectoryOperation;
 use BasicApp\Publisher\PublisherLogger;
 
-class SetPermissions extends \BasicApp\Command\BaseCommand
+class CreateDirectory extends \BasicApp\Command\BaseCommand
 {
 
     /**
@@ -25,27 +25,27 @@ class SetPermissions extends \BasicApp\Command\BaseCommand
      *
      * @var string
      */
-    protected $name = 'ba:set-permissions';
+    protected $name = 'ba:create-directory';
 
     /**
      * the Command's short description
      *
      * @var string
      */
-    protected $description = 'Set permissions to directories and files.';
+    protected $description = 'Create directory.';
 
     /**
      * the Command's usage
      *
      * @var string
      */
-    protected $usage = 'ba:set-permissions [path] [permissions]';
+    protected $usage = 'ba:create-directory [path] [permissions] [recursive]';
 
     public function run(array $params)
     {
         $params[0] = $this->rootPath($params[0]);
 
-        (new SetPermissionsOperation(...$params))
+        (new CreateDirectoryOperation(...$params))
             ->setLogger(new PublisherLogger)
             ->run();
     }

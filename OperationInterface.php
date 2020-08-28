@@ -11,8 +11,6 @@ use Psr\Log\LoggerAwareInterface;
 interface OperationInterface extends LoggerAwareInterface
 {
 
-    public function __construct();
-
     public function run();
 
 }

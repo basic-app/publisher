@@ -51,7 +51,7 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
             return;
         }
 
-        if (!$zip->extractTo($this->target, $this->entries))
+        if (!$zip->extractTo($this->target, (count($this->entries) > 0) ? $this->entries : null))
         {
             $this->logger->error('{source} extract to {target} error.', [
                 'source' => $this->source,

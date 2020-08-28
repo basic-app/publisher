@@ -7,6 +7,7 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\Operations\DownloadOperation;
+use BasicApp\Publisher\PublisherLogger;
 
 class Download extends \BasicApp\Command\BaseCommand
 {
@@ -38,14 +39,14 @@ class Download extends \BasicApp\Command\BaseCommand
      *
      * @var string
      */
-    protected $usage = 'ba:download {source} {target}';
+    protected $usage = 'ba:download [url] [path]';
 
     public function run(array $params)
     {
-        list($source, $target) = $params;
+        $params[1] = $this->rootPath($params[1]);
 
-        new DownloadOperation($source, $target, (bool) $overwrite)
-            ->setLogger(new PublsiherLogger)
+        (new DownloadOperation(...$params))
+            ->setLogger(new PublisherLogger)
             ->run();
     }
 

@@ -11,9 +11,9 @@ use BasicApp\Publisher\Operations\DownloadOperation;
 use BasicApp\Publisher\Operations\ZipOperation;
 use BasicApp\Publisher\HelperLogger;
 
-if (!function_exists('publisher_copy'))
+if (!function_exists('ba_copy'))
 {
-    function publisher_copy(string $source, string $target, bool $overwrite = true)
+    function ba_copy(string $source, string $target, bool $overwrite = true)
     { 
         return new CopyOperation($source, $target, $overwrite)
             ->setLogger(new HelperLogger)
@@ -21,9 +21,9 @@ if (!function_exists('publisher_copy'))
     }
 }
 
-if (!function_exists('publisher_delete'))
+if (!function_exists('ba_delete'))
 {
-    function publisher_delete(string $path)
+    function ba_delete(string $path)
     { 
         return new DeleteOperation($path)
             ->setLogger(new HelperLogger)
@@ -31,9 +31,9 @@ if (!function_exists('publisher_delete'))
     }
 }
 
-if (!function_exists('publisher_set_permissions'))
+if (!function_exists('ba_set_permissions'))
 {
-    function publisher_set_permissions(string $path, string $permissions)
+    function ba_set_permissions(string $path, string $permissions)
     { 
         return new SetPermissionsOperation($path, $permissions)
             ->setLogger(new HelperLogger)
@@ -41,9 +41,9 @@ if (!function_exists('publisher_set_permissions'))
     }
 }
 
-if (!function_exists('publisher_download'))
+if (!function_exists('ba_download'))
 {
-    function publisher_download(string $url, string $target, bool $overwrite = true)
+    function ba_download(string $url, string $target, bool $overwrite = true)
     { 
         return new DownloadOperation($url, $target, $overwrite)
             ->setLogger(new HelperLogger)
@@ -51,11 +51,21 @@ if (!function_exists('publisher_download'))
     }
 }
 
-if (!function_exists('publisher_unzip'))
+if (!function_exists('ba_unzip'))
 {
-    function publisher_unzip(string $file, string $target, array $entries = [])
+    function ba_unzip(string $file, string $target, array $entries = [])
     { 
         return new UnzipOperation($file, $target, $entries)
+            ->setLogger(new HelperLogger)
+            ->run();
+    }
+}
+
+if (!function_exists('ba_create_directory'))
+{
+    function ba_create_directory(string $path, $permissions, bool $recursive = [])
+    { 
+        return new UnzipOperation($path, $permissions, $recursive)
             ->setLogger(new HelperLogger)
             ->run();
     }

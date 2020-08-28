@@ -7,6 +7,7 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\Operations\DeleteOperation;
+use BasicApp\Publisher\PublisherLogger;
 
 class Delete extends \BasicApp\Command\BaseCommand
 {
@@ -38,14 +39,14 @@ class Delete extends \BasicApp\Command\BaseCommand
      *
      * @var string
      */
-    protected $usage = 'ba:delete {path}';
+    protected $usage = 'ba:delete [path]';
 
     public function run(array $params)
     {
-        list($path) = $params;
+        $params[0] = $this->rootPath($params[0]);
 
-        new DeleteOperation($path)
-            ->setLogger(new PublsiherLogger)
+        (new DeleteOperation(...$params))
+            ->setLogger(new PublisherLogger)
             ->run();
     }
 
