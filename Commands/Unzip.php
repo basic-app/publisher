@@ -6,10 +6,9 @@
  */
 namespace BasicApp\Publisher\Commands;
 
-use BasicApp\Publisher\PublisherEvents;
-use BasicApp\Publisher\Events\PublishEvent;
+use BasicApp\Publisher\Operations\UnzipOperation;
 
-class Publish extends \BasicApp\Command\BaseCommand
+class Copy extends \BasicApp\Command\BaseCommand
 {
 
     /**
@@ -25,36 +24,31 @@ class Publish extends \BasicApp\Command\BaseCommand
      *
      * @var string
      */
-    protected $name = 'ba:publish';
+    protected $name = 'ba:unzip';
 
     /**
      * the Command's short description
      *
      * @var string
      */
-    protected $description = 'Publish vendor assets.';
+    protected $description = 'Unzip directories and files.';
 
     /**
      * the Command's usage
      *
      * @var string
      */
-    protected $usage = 'ba:publish';
+    protected $usage = 'ba:unzip {source} {target} {entries}';
 
     public function run(array $params)
     {
-        $refresh = false;
+        list($source, $target, $entries) = $params;
 
-        $event = PublisherEvents::publish($refresh);
+        $entries = exlode(',', $entries);
 
-        PublisherEvents::beforePublish($event);
-
-        foreach($event->operations as $operation)
-        {
-            $operation->run();
-        }
-
-        PublisherEvents::afterPublish($event);
+        new UnzipOperation($source, $target, $entries)
+            ->setLogger(new PublsiherLogger)
+            ->run();
     }
 
 }

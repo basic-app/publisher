@@ -7,7 +7,6 @@
 namespace BasicApp\Publisher\Events;
 
 use Closure;
-use Psr\Log\LoggerInterface;
 use BasicApp\OperationInterface;
 use BasicApp\Publisher\Operations\UnzipOperation;
 use BasicApp\Publisher\Operations\DownloadOperation;

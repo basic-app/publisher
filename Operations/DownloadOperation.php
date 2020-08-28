@@ -12,37 +12,39 @@ use Psr\Log\LoggerInterface;
 class DownloadOperation extends \BasicApp\Publisher\BaseOperation
 {
 
-    public $sourceUrl;
+    public $url;
 
-    public $targetFile;
+    public $target;
 
     public $curlOptions = [];
 
-    public function __construct(string $sourceUrl, string $targetFile, array $curlOptions = [])
+    public function __construct(string $url, string $target, array $curlOptions = [])
     {
         parent::__construct();
 
-        $this->sourceUrl = $sourceUrl;
+        $this->url = $url;
 
-        $this->targetFile = $targetFile;
+        $this->target = $target;
 
         $this->curlOptions = $curlOptions;
     }
 
-    public function run(LoggerInterface $logger)
+    public function run()
     {
-        if (is_file($target) && !$overwrite)
+        if ($this->pathIsExists($this->target) && !$overwrite)
         {
-            $logger->debug($this->targetFile . ' is exists.');
+            $this->logger->debug('{target} is exists.', [
+                'target' => $this->target
+            ]);
 
             return;
         }
 
-        service('curl')->download($this->sourceUrl, $this->targetFile, $this->curlOptions);
+        service('curl')->download($this->url, $this->target, $this->curlOptions);
 
-        $logger->info('{sourceFile} is downloaded to {targetFile}.', [
-            'sourceUrl' => $this->sourceUrl,
-            'targetFile' => $this->targetFile,
+        $this->logger->info('{url} is downloaded to {target}.', [
+            'url' => $this->url,
+            'target' => $this->target,
             'curlOptions' => $this->curlOptions
         ]);
     }

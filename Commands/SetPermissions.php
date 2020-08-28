@@ -6,10 +6,9 @@
  */
 namespace BasicApp\Publisher\Commands;
 
-use BasicApp\Publisher\PublisherEvents;
-use BasicApp\Publisher\Events\PublishEvent;
+use BasicApp\Publisher\Operations\SetPermissionsOperation;
 
-class Publish extends \BasicApp\Command\BaseCommand
+class SetPermissions extends \BasicApp\Command\BaseCommand
 {
 
     /**
@@ -25,36 +24,29 @@ class Publish extends \BasicApp\Command\BaseCommand
      *
      * @var string
      */
-    protected $name = 'ba:publish';
+    protected $name = 'ba:setPermissions';
 
     /**
      * the Command's short description
      *
      * @var string
      */
-    protected $description = 'Publish vendor assets.';
+    protected $description = 'Set permissions to directories and files.';
 
     /**
      * the Command's usage
      *
      * @var string
      */
-    protected $usage = 'ba:publish';
+    protected $usage = 'ba:setPermissions {path} {permissions}';
 
     public function run(array $params)
     {
-        $refresh = false;
+        list($path, $permissions) = $params;
 
-        $event = PublisherEvents::publish($refresh);
-
-        PublisherEvents::beforePublish($event);
-
-        foreach($event->operations as $operation)
-        {
-            $operation->run();
-        }
-
-        PublisherEvents::afterPublish($event);
+        new SetPermissionsOperation($path, $permissions)
+            ->setLogger(new PublsiherLogger)
+            ->run();
     }
 
 }

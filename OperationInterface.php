@@ -6,12 +6,12 @@
  */
 namespace BasicApp\Publisher;
 
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
 
-interface OperationInterface
+interface OperationInterface extends LoggerAwareInterface
 {
 
-    public function __construct(LoggerInterface $logger);
+    public function __construct();
 
     public function run();
 

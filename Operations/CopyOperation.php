@@ -6,27 +6,29 @@
  */
 namespace BasicApp\Publisher\Operations;
 
+use Psr\Log\LoggerInterface;
+
 class CopyOperation extends \BasicApp\Publisher\BaseOperation
 {
 
-    public $sourcePath;
+    public $source;
 
-    public $targetPath;
+    public $target;
 
     public $overwrite = true;
 
-    public function __construct(string $path, array $only = [], array $except = [])
+    public function __construct(string $source, string $target, bool $overwrite = true)
     {
         parent::__construct();
 
-        $this->path = $path;
+        $this->source = $source;
 
-        $this->only = $only;
+        $this->target = $target;
 
-        $this->except = $except;
+        $this->overwrite = $overwrite;
     }
 
-    public function run(LoggerInterface $logger)
+    public function run()
     {
         helper('filesystem');
         
@@ -44,11 +46,13 @@ class CopyOperation extends \BasicApp\Publisher\BaseOperation
 
         */
 
-        $logger->info('Files in {path} deleted.', [
+        /*
+        $this->logger->info('Files in {path} deleted.', [
             'path' => $this->path,
             'except' => $this->except,
             'only' => $this->only
         ]);
+        */
     }
 
 }

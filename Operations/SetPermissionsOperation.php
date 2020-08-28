@@ -7,8 +7,6 @@
 namespace BasicApp\Publisher\Operations;
 
 use ZipArchive;
-use Psr\Log\LoggerInterface;
-use BasicApp\Publisher\PublisherException;
 
 class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
 {
@@ -17,9 +15,9 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
 
     public $permissions;
 
-    public function __construct(LoggerInterface $logger, string $path, string $permissions)
+    public function __construct(string $path, string $permissions)
     {
-        parent::__construct($logger);
+        parent::__construct();
 
         $this->path = $path;
 
@@ -30,9 +28,18 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
     {
         if (!is_file($this->path) && !is_dir($this->path))
         {
-            $this->error('{path} not found.', [
-                'path' => $this->path,
-                'permissions' => $this->permissions
+            if (is_symlimk($this->path))
+            {
+                $this->logger->error('Can not set {permissions} permissions to symlink {path}.', [
+                    'path' => $this->path,
+                    'permissions' => $this->permissions
+                ]);
+
+                return;
+            }
+                
+            $this->logger->error('Can not set permissions {permissions} to {path}. Path not found.', [
+                'path' => $this->path
             ]);
 
             return;
@@ -40,7 +47,7 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
 
         if (!chmod($this->path, is_string($this->permissions) ? octdec($this->permissions) : $this->permissions))
         {
-            $this->error('{path} permissions {permissions} is not changed.', [
+            $this->logger->error('{path} permissions {permissions} is not changed.', [
                 'path' => $path,
                 'permissions' => $this->permissions
             ]);
@@ -48,7 +55,7 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
             return;
         }
 
-        $this->info('Permissions {permissions} was applied to {path}.', [
+        $this->logger->info('Permissions {permissions} was applied to {path}.', [
             'path' => $this->path,
             'permissions' => $this->permissions
         ]);

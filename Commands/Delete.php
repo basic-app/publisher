@@ -6,10 +6,9 @@
  */
 namespace BasicApp\Publisher\Commands;
 
-use BasicApp\Publisher\PublisherEvents;
-use BasicApp\Publisher\Events\PublishEvent;
+use BasicApp\Publisher\Operations\DeleteOperation;
 
-class Publish extends \BasicApp\Command\BaseCommand
+class Delete extends \BasicApp\Command\BaseCommand
 {
 
     /**
@@ -25,36 +24,29 @@ class Publish extends \BasicApp\Command\BaseCommand
      *
      * @var string
      */
-    protected $name = 'ba:publish';
+    protected $name = 'ba:delete';
 
     /**
      * the Command's short description
      *
      * @var string
      */
-    protected $description = 'Publish vendor assets.';
+    protected $description = 'Delete directories and files.';
 
     /**
      * the Command's usage
      *
      * @var string
      */
-    protected $usage = 'ba:publish';
+    protected $usage = 'ba:delete {path}';
 
     public function run(array $params)
     {
-        $refresh = false;
+        list($path) = $params;
 
-        $event = PublisherEvents::publish($refresh);
-
-        PublisherEvents::beforePublish($event);
-
-        foreach($event->operations as $operation)
-        {
-            $operation->run();
-        }
-
-        PublisherEvents::afterPublish($event);
+        new DeleteOperation($path)
+            ->setLogger(new PublsiherLogger)
+            ->run();
     }
 
 }

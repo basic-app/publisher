@@ -12,29 +12,29 @@ use Psr\Log\LoggerInterface;
 class UnzipOperation extends \BasicApp\Publisher\BaseOperation
 {
 
-    public $zipFile;
+    public $source;
 
-    public $targetDirectory;
+    public $target;
 
     public $entries = [];
 
-    public function __construct(LoggerInterface $logger, string $zipFile, string $targetDirectory, array $entries = [])
+    public function __construct(string $source, string $target, array $entries = [])
     {
         parent::__construct();
 
-        $this->zipFile = $zipFile;
+        $this->source = $source;
 
-        $this->targetDirectory = $targetDirectory;
+        $this->target = $target;
 
         $this->entries = $entries;
     }
 
     public function run()
     {
-        if (!is_file($this->zipFile))
+        if (!is_file($this->source))
         {
-            $this->error('{zipFile} is not found.', [
-                'zipFile' => $this->zipFile
+            $this->logger->error('{source} not found.', [
+                'source' => $this->source
             ]);
 
             return;
@@ -42,20 +42,20 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
 
         $zip = new ZipArchive;
         
-        if ($zip->open($this->zipFile) !== true)
+        if ($zip->open($this->source) !== true)
         {
-            $this->error('{zipFile} open error.', [
-                'zipFile' => $this->zipFile
+            $this->logger->error('{source} open error.', [
+                'source' => $this->source
             ]);
 
             return;
         }
 
-        if (!$zip->extractTo($this->targetDirectory, $this->entries))
+        if (!$zip->extractTo($this->target, $this->entries))
         {
-            $this->error('{zipFile} extract to {targetDirectory} error.', [
-                'zipFile' => $this->zipFile,
-                'targetDirectory' => $this->targetDirectory
+            $this->logger->error('{source} extract to {target} error.', [
+                'source' => $this->source,
+                'target' => $this->target
             ]);
 
             return;
@@ -63,16 +63,16 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
         
         if (!$zip->close())
         {
-            $this->error('{zipFile} close error.', [
-                'zipFile' => $this->zipFile
+            $this->logger->error('{source} close error.', [
+                'source' => $this->source
             ]);
 
             return;
         }
 
-        $this->info('{zipFile} is extracted to {targetDirectory}.', [
-            'zipFile' => $this->zipFile,
-            'targetDirectory' => $this->targetDirectory,
+        $this->logger->info('{source} is extracted to {target}.', [
+            'source' => $this->source,
+            'target' => $this->target,
             'entries' => $this->entries
         ]);
     }

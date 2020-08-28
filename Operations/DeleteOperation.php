@@ -30,14 +30,16 @@ class DeleteDirectoryOperation extends \BasicApp\Publisher\BaseOperation
 
         if (!is_dir($this->directory))
         {
-            $this->throwException('Directory {directory} is not found.', [
+            $this->logger->error('Directory {directory} is not found.', [
                 'directory' => $this->directory
             ]);
+
+            return;
         }
 
         // delete directory
 
-        $logger->info('{directory} is deleted.', [
+        $this->logger->info('{directory} is deleted.', [
             'directory' => $this->directory,
             'keepRootDirectory' => $this->keepRootDirectory
         ]);
