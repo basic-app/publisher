@@ -7,7 +7,7 @@
         }
     },
     "require": {
-        "psr/log": "*",
+        "basic-app/helper-logger": "*",
         "basic-app/event": "*",
         "basic-app/command": "*",
         "basic-app/curl": "*"

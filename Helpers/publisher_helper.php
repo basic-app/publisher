@@ -8,8 +8,9 @@ use BasicApp\Publisher\Operations\CopyOperation;
 use BasicApp\Publisher\Operations\DeleteOperation;
 use BasicApp\Publisher\Operations\SetPermissionsOperation;
 use BasicApp\Publisher\Operations\DownloadOperation;
-use BasicApp\Publisher\Operations\ZipOperation;
-use BasicApp\Publisher\HelperLogger;
+use BasicApp\Publisher\Operations\UnzipOperation;
+use BasicApp\Publisher\Operations\CreateDirectoryOperation;
+use BasicApp\HelperLogger\HelperLogger;
 
 if (!function_exists('ba_copy'))
 {
@@ -65,7 +66,7 @@ if (!function_exists('ba_create_directory'))
 {
     function ba_create_directory(string $path, $permissions, bool $recursive = [])
     { 
-        return new UnzipOperation($path, $permissions, $recursive)
+        return new CreateDirectoryOperation($path, $permissions, $recursive)
             ->setLogger(new HelperLogger)
             ->run();
     }
