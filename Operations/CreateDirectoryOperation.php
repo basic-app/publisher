@@ -26,29 +26,31 @@ class CreateDirectoryOperation extends \BasicApp\Publisher\BaseOperation
         $this->recursive = $recursive;
     }
 
-    public function run()
+    public function run() : bool
     {
-        if ($this->isExists($this->path))
+        if ($this->pathIsExists($this->path))
         {
             $this->logger->info('{path} is exits.', [
                 'path' => $this->path
             ]);
 
-            return;
+            return true;
         }
 
         if (!mkdir($this->path, $this->permissions, $this->recursive))
         {
-            $this->logger->error('{path} is not created.', [
+            $this->logger->error('Directory {path} is not created.', [
                 'path' => $this->path
             ]);
 
-            return;
+            return false;
         }
 
-        $this->logger->info('{path} created.', [
+        $this->logger->info('Directory {path} created.', [
             'path' => $this->path
         ]);
+
+        return true;
     }
 
 }

@@ -24,25 +24,27 @@ class DeleteDirectoryOperation extends \BasicApp\Publisher\BaseOperation
         $this->keepRootDirectory = $keepRootDirectory;
     }
 
-    public function run(LoggerInterface $logger)
+    public function run() : bool
     {
         clearstatcache();
 
         if (!is_dir($this->directory))
         {
-            $this->logger->error('Directory {directory} is not found.', [
+            $this->logger->error('Directory {directory} not found.', [
                 'directory' => $this->directory
             ]);
 
-            return;
+            return false;
         }
 
         // delete directory
 
-        $this->logger->info('{directory} is deleted.', [
+        $this->logger->info('{directory} deleted.', [
             'directory' => $this->directory,
             'keepRootDirectory' => $this->keepRootDirectory
         ]);
+
+        return true;
     }
 
 }

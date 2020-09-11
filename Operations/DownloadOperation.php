@@ -33,16 +33,16 @@ class DownloadOperation extends \BasicApp\Publisher\BaseOperation
         $this->curlOptions = $curlOptions;
     }
 
-    public function run()
+    public function run() : bool
     {
-        if ($this->isExists($this->target) && !$this->overwrite)
+        if ($this->pathIsExists($this->target) && !$this->overwrite)
         {
             $this->logger->debug('{url} not downloaded, {target} is exists.', [
                 'url' => $this->url,
                 'target' => $this->target
             ]);
 
-            return;
+            return true;
         }
 
         service('curl')->download($this->url, $this->target, $this->overwrite, $this->curlOptions);
@@ -52,6 +52,8 @@ class DownloadOperation extends \BasicApp\Publisher\BaseOperation
             'target' => $this->target,
             'curlOptions' => $this->curlOptions
         ]);
+
+        return true;
     }
 
 }

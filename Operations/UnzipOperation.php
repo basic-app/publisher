@@ -29,7 +29,7 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
         $this->entries = $entries;
     }
 
-    public function run()
+    public function run() : bool
     {
         if (!is_file($this->source))
         {
@@ -37,7 +37,7 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
                 'source' => $this->source
             ]);
 
-            return;
+            return false;
         }
 
         $zip = new ZipArchive;
@@ -48,7 +48,7 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
                 'source' => $this->source
             ]);
 
-            return;
+            return false;
         }
 
         if (!$zip->extractTo($this->target, (count($this->entries) > 0) ? $this->entries : null))
@@ -58,7 +58,7 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
                 'target' => $this->target
             ]);
 
-            return;
+            return false;
         }
         
         if (!$zip->close())
@@ -67,7 +67,7 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
                 'source' => $this->source
             ]);
 
-            return;
+            return false;
         }
 
         $this->logger->info('{source} is extracted to {target}.', [
@@ -75,6 +75,8 @@ class UnzipOperation extends \BasicApp\Publisher\BaseOperation
             'target' => $this->target,
             'entries' => $this->entries
         ]);
+
+        return true;
     }
 
 }

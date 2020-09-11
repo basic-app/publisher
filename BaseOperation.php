@@ -21,9 +21,9 @@ abstract class BaseOperation implements OperationInterface
         $this->setLogger(new NullLogger);
     }
 
-    abstract public function run();
+    abstract public function run() : bool;
 
-    protected function isExists(string $path)
+    public function pathIsExists(string $path) : bool
     {
         clearstatcache();
 

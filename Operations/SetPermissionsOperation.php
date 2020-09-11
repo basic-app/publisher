@@ -24,7 +24,7 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
         $this->permissions = $permissions;
     }
 
-    public function run()
+    public function run() : bool
     {
         if (!is_file($this->path) && !is_dir($this->path))
         {
@@ -35,7 +35,7 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
                     'permissions' => $this->permissions
                 ]);
 
-                return;
+                return false;
             }
                 
             $this->logger->error('Can\'t set permissions {permissions} to {path}. Path not found.', [
@@ -43,7 +43,7 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
                 'permissions' => $this->permissions
             ]);
 
-            return;
+            return false;
         }
 
         if (!chmod($this->path, is_string($this->permissions) ? octdec($this->permissions) : $this->permissions))
@@ -53,13 +53,15 @@ class SetPermissionsOperation extends \BasicApp\Publisher\BaseOperation
                 'permissions' => $this->permissions
             ]);
 
-            return;
+            return false;
         }
 
         $this->logger->info('Permissions {permissions} was applied to {path}.', [
             'path' => $this->path,
             'permissions' => $this->permissions
         ]);
+
+        return true;
     }
 
 }
