@@ -7,7 +7,7 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\Operations\DownloadOperation;
-use BasicApp\Publisher\PublisherLogger;
+use BasicApp\ConsoleLogger\ConsoleLogger;
 
 class Download extends \BasicApp\Command\BaseCommand
 {
@@ -46,7 +46,7 @@ class Download extends \BasicApp\Command\BaseCommand
         $params[1] = $this->rootPath($params[1]);
 
         (new DownloadOperation(...$params))
-            ->setLogger(new PublisherLogger)
+            ->setLogger(new ConsoleLogger)
             ->run();
     }
 

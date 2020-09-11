@@ -23,7 +23,7 @@ abstract class BaseOperation implements OperationInterface
 
     abstract public function run() : bool;
 
-    public function pathIsExists(string $path) : bool
+    public function isExists(string $path) : bool
     {
         clearstatcache();
 

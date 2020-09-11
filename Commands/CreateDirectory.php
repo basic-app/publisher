@@ -7,7 +7,7 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\Operations\CreateDirectoryOperation;
-use BasicApp\Publisher\PublisherLogger;
+use BasicApp\ConsoleLogger\ConsoleLogger;
 
 class CreateDirectory extends \BasicApp\Command\BaseCommand
 {
@@ -46,7 +46,7 @@ class CreateDirectory extends \BasicApp\Command\BaseCommand
         $params[0] = $this->rootPath($params[0]);
 
         (new CreateDirectoryOperation(...$params))
-            ->setLogger(new PublisherLogger)
+            ->setLogger(new ConsoleLogger)
             ->run();
     }
 

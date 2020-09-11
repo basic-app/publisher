@@ -32,53 +32,54 @@ class CopyOperation extends \BasicApp\Publisher\BaseOperation
         $this->hidden = $hidden;
     }
 
-    public function run()
+    public function run() : bool
     {
         clearstatcache();
 
-        if (!$overwrite && $this->isExists($this->target))
+        if (!$this->overwrite && $this->isExists($this->target))
         {
-            $this->logger->debug('Copy {source} to {target}. Target is exists.', [
+            $this->logger->debug('{source} -> {target} exists', [
                 'source' => $this->source,
                 'target' => $this->target,
                 'overwrite' => $this->overwrite
             ]);            
 
-            return;
+            return true;
         }
 
         if (is_link($this->source))
         {
             $this->copyLink($this->source, $this->target);
+        
+            return true;
         }
         elseif(is_dir($this->source))
         {
-            $this->copyDirectory($this->source, $this->target, $this->hidden);
+            $this->copyDirectory($this->source, $this->target, $this->overwrite, $this->hidden);
+        
+            return true;
         }
         elseif(is_file($this->source))
         {
             $this->copyFile($this->source, $this->target);
+        
+            return true;
         }
 
-        $this->logger->error('{source} not found.', [
+        $this->logger->error('{source} -> {target } source error', [
             'source' => $this->source,
             'target' => $this->target,
             'overwrite' => $this->overwrite
         ]);
+
+        return false;
     }
 
     public function createDirectory(string $target)
     {
-        $return = (new CreateDirectoryOperation($target))->run();
-
-        if (!$return)
-        {
-            $this->logger->error('Directory {target} not created.', [
-                'target' => $target
-            ]);
-        }
-
-        return $return;
+        return (new CreateDirectoryOperation($target))
+            ->setLogger($this->logger)
+            ->run();
     }
 
     public function getDirectoryName(string $path) : string
@@ -103,7 +104,7 @@ class CopyOperation extends \BasicApp\Publisher\BaseOperation
 
         if ($link === false)
         {
-            $this->logger->error('Read link {source} error.', [
+            $this->logger->error('{source} -> {target} read error', [
                 'source' => $source,
                 'target' => $target
             ]);
@@ -113,7 +114,7 @@ class CopyOperation extends \BasicApp\Publisher\BaseOperation
 
         if (!symlink($link, $target))
         {
-            $this->logger->error('Create symlink from {source} to {target} error.', [
+            $this->logger->error('{source} -> {target} symlink error', [
                 'source' => $source,
                 'target' => $target
             ]);
@@ -121,7 +122,7 @@ class CopyOperation extends \BasicApp\Publisher\BaseOperation
             return false;
         }
 
-        $this->logger->info('Symlink to {target} from {source} created.', [
+        $this->logger->info('{source} -> {target}', [
             'source' => $source,
             'target' => $target
         ]);
@@ -145,7 +146,7 @@ class CopyOperation extends \BasicApp\Publisher\BaseOperation
 
         if (!copy($source, $target))
         {
-            $this->logger->error('Copying file {source} to {target} error.', [
+            $this->logger->error('{source} -> {target} copy error', [
                 'source' => $source,
                 'target' => $target
             ]);
@@ -153,7 +154,7 @@ class CopyOperation extends \BasicApp\Publisher\BaseOperation
             return false;
         }
 
-        $this->logger->info('File {source} was copied to {target}.', [
+        $this->logger->info('{source} -> {target}', [
             'source' => $source,
             'target' => $target
         ]);
@@ -161,96 +162,31 @@ class CopyOperation extends \BasicApp\Publisher\BaseOperation
         return true;
     }
 
-    public function copyDirectory()
+    public function copyDirectory(string $source, string $target, bool $overwrite = true, bool $hidden = true)
     {
-
         helper('filesystem');
 
-
-
-
-
-        return true;
-    }    
-
-
-
-    /*
-
-
-
-    public static function copyFile($source, $dest, $permission = 0755, $throwExceptions = true, &$error = null)
-    {
-
-
-        if (!static::createDirectory($dir, $permission, true, $throwExceptions, $error))
+        if (!$this->createDirectory($target))
         {
-            return static::_returnFalse($error, $throwExceptions);
+            return false;
         }
 
-
-        return true;
-    }
-
-    public static function copyDirectory($source, $dest, $permission = 0755, $throwExceptions, &$error = null)
-    {
-        if (!is_dir($dest))
-        {        
-            if (!static::createDirectory($dest, $permission, true, $throwExceptions, $error))
-            {
-                return static::_returnFalse($error, $throwExceptions);
-            }
-        }
-
-        $items = static::readDirectory($source, $throwExceptions, $error);
-
-        if ($items === false)
-        {
-            return static::_returnFalse($error, $throwExceptions);
-        }
+        $items = directory_map($source, 1, $hidden);
 
         foreach($items as $file)
         {
-            if (!static::copy($source . DIRECTORY_SEPARATOR . $file, $dest . DIRECTORY_SEPARATOR . $file, $permission, $throwExceptions, $error))
-            {
-                return static::_returnFalse($error, $throwExceptions);
-            }
+            $file = rtrim($file, DIRECTORY_SEPARATOR);
+
+            $from = $source . DIRECTORY_SEPARATOR . $file;
+
+            $to = $target . DIRECTORY_SEPARATOR . $file;
+
+            (new CopyOperation($from, $to, $overwrite, $hidden))
+                ->setLogger($this->logger)
+                ->run();
         }
 
         return true;
     }
-    */
-
-    /*
-
-    public static function readDirectory($source, $throwExceptions = true, &$error = null)
-    {
-        $dir = dir($source);
-
-        if (!$dir)
-        {
-            $error = 'Can\'t open directory: ' . $dir;
-
-            return static::_returnFalse($error, $throwExceptions);
-        }
-
-        $items = [];
-        
-        while(false !== ($file = $dir->read()))
-        {
-            if ($file == '.' || $file == '..')
-            {
-                continue;
-            }
-
-            $items[] = $file;
-        }
-
-        $dir->close();
-
-        return $items;
-    }
-
-    */
 
 }

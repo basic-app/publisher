@@ -28,9 +28,9 @@ class CreateDirectoryOperation extends \BasicApp\Publisher\BaseOperation
 
     public function run() : bool
     {
-        if ($this->pathIsExists($this->path))
+        if ($this->isExists($this->path))
         {
-            $this->logger->info('{path} is exits.', [
+            $this->logger->debug('{path} exists', [
                 'path' => $this->path
             ]);
 
@@ -39,14 +39,14 @@ class CreateDirectoryOperation extends \BasicApp\Publisher\BaseOperation
 
         if (!mkdir($this->path, $this->permissions, $this->recursive))
         {
-            $this->logger->error('Directory {path} is not created.', [
+            $this->logger->error('{path} mkdir error', [
                 'path' => $this->path
             ]);
 
             return false;
         }
 
-        $this->logger->info('Directory {path} created.', [
+        $this->logger->info('{path} created', [
             'path' => $this->path
         ]);
 

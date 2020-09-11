@@ -7,7 +7,7 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\Operations\CopyOperation;
-use BasicApp\Publisher\PublisherLogger;
+use BasicApp\ConsoleLogger\ConsoleLogger;
 
 class Copy extends \BasicApp\Command\BaseCommand
 {
@@ -47,7 +47,7 @@ class Copy extends \BasicApp\Command\BaseCommand
         $params[1] = $this->rootPath($params[1]);
 
         (new CopyOperation(...$params))
-            ->setLogger(new PublisherLogger)
+            ->setLogger(new ConsoleLogger)
             ->run();
     }
 

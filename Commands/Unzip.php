@@ -7,7 +7,7 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\Operations\UnzipOperation;
-use BasicApp\Publisher\PublisherLogger;
+use BasicApp\ConsoleLogger\ConsoleLogger;
 
 class Unzip extends \BasicApp\Command\BaseCommand
 {
@@ -53,7 +53,7 @@ class Unzip extends \BasicApp\Command\BaseCommand
         }
 
         (new UnzipOperation(...$params))
-            ->setLogger(new PublisherLogger)
+            ->setLogger(new ConsoleLogger)
             ->run();
     }
 

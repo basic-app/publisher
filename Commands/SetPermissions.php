@@ -7,7 +7,7 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\Operations\SetPermissionsOperation;
-use BasicApp\Publisher\PublisherLogger;
+use BasicApp\ConsoleLogger\ConsoleLogger;
 
 class SetPermissions extends \BasicApp\Command\BaseCommand
 {
@@ -46,7 +46,7 @@ class SetPermissions extends \BasicApp\Command\BaseCommand
         $params[0] = $this->rootPath($params[0]);
 
         (new SetPermissionsOperation(...$params))
-            ->setLogger(new PublisherLogger)
+            ->setLogger(new ConsoleLogger)
             ->run();
     }
 
