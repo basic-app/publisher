@@ -8,6 +8,7 @@ namespace BasicApp\Publisher;
 
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
+use Psr\Log\LoggerInterface;
 
 abstract class BaseOperation implements OperationInterface
 {
@@ -30,7 +31,7 @@ abstract class BaseOperation implements OperationInterface
         return is_file($path) || is_dir($path) || is_link($path);
     }
 
-    public function setLogger($logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->setLoggerTrait($logger);
 

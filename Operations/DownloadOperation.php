@@ -45,6 +45,14 @@ class DownloadOperation extends \BasicApp\Publisher\BaseOperation
             return true;
         }
 
+        $permissions = '0755';
+
+        $recursive = true;
+
+        (new CreateDirectoryOperation(dirname($this->target), $permissions, $recursive))
+            ->setLogger($this->logger)
+            ->run();
+
         service('curl')->download($this->url, $this->target, $this->overwrite, $this->curlOptions);
 
         $this->logger->info('{url} -> {target}', [

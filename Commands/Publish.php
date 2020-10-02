@@ -49,7 +49,7 @@ class Publish extends \BasicApp\Command\BaseCommand
 
         PublisherEvents::beforePublish($event);
 
-        foreach($event->operations as $operation)
+        foreach($event->getOperations() as $operation)
         {
             $operation->run();
         }

@@ -7,7 +7,7 @@
 namespace BasicApp\Publisher\Events;
 
 use Closure;
-use BasicApp\OperationInterface;
+use BasicApp\Publisher\OperationInterface;
 use BasicApp\Publisher\Operations\UnzipOperation;
 use BasicApp\Publisher\Operations\DownloadOperation;
 use BasicApp\Publisher\Operations\SetPermissionsOperation;
@@ -21,21 +21,14 @@ class PublishEvent extends \BasicApp\Event\BaseEvent
 
     protected $_operations = [];
 
-    protected $_logger;
-
-    public function __construct(array $config = [])
+    public function createOperation(string $class, ...$params) : OperationInterface
     {
-        parent::__construct();
+        return (new $class(...$params))->setLogger($this->logger);
     }
-
-    public function createOperation(string $class, array $params = [])
-    {
-        return new $class($this->logger, ...array_values($params));
-    }    
 
     public function addOperation(OperationInterface $operation)
     {
-        $this->_operations[] = $operation
+        $this->_operations[] = $operation;
 
         return $operation;
     }

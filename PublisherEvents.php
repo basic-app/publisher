@@ -6,9 +6,9 @@
  */
 namespace BasicApp\Publisher;
 
-use Events\PublishEvent;
+use BasicApp\Publisher\Events\PublishEvent;
 
-class PublisherEvents
+class PublisherEvents extends \CodeIgniter\Events\Events
 {
 
     const EVENT_PUBLISH = 'ba:publish';
@@ -31,15 +31,6 @@ class PublisherEvents
     public static function beforePublish(PublishEvent $event)
     {
         static::trigger(static::EVENT_BEFORE_PUBLISH, $event);
-    }
-
-    public static function publish(array $config = [])
-    {
-        $event = new PublishEvent($config);
-
-        static::trigger(static::EVENT_PUBLISH, $event);
-
-        return $event->toArray();
     }
 
     public static function afterPublish(PublishEvent $event)
