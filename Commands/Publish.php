@@ -6,6 +6,7 @@
  */
 namespace BasicApp\Publisher\Commands;
 
+use BasicApp\ConsoleLogger\ConsoleLogger;
 use BasicApp\Publisher\PublisherEvents;
 use BasicApp\Publisher\Events\PublishEvent;
 
@@ -45,7 +46,11 @@ class Publish extends \BasicApp\Command\BaseCommand
     {
         $refresh = false;
 
-        $event = PublisherEvents::publish($refresh);
+        $logger = new ConsoleLogger;
+
+        $logger->debug = true;
+
+        $event = PublisherEvents::publish($refresh, $logger);
 
         PublisherEvents::beforePublish($event);
 

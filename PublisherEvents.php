@@ -7,6 +7,7 @@
 namespace BasicApp\Publisher;
 
 use BasicApp\Publisher\Events\PublishEvent;
+use Psr\Log\LoggerInterface;
 
 class PublisherEvents extends \CodeIgniter\Events\Events
 {
@@ -17,9 +18,14 @@ class PublisherEvents extends \CodeIgniter\Events\Events
     
     const EVENT_AFTER_PUBLISH = 'ba:after_publish';
 
-    public static function publish(bool $refresh = false)
+    public static function publish(bool $refresh = false, ?LoggerInterface $logger)
     {
         $event = new PublishEvent;
+
+        if ($logger)
+        {
+            $event->setLogger($logger);
+        }
 
         $event->refresh = $refresh;
 
