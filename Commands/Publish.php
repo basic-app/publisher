@@ -7,7 +7,6 @@
 namespace BasicApp\Publisher\Commands;
 
 use BasicApp\Publisher\PublisherEvents;
-use BasicApp\Publisher\Events\PublishEvent;
 
 class Publish extends \BasicApp\Command\BaseCommand
 {
@@ -44,17 +43,12 @@ class Publish extends \BasicApp\Command\BaseCommand
     public function run(array $params)
     {
         $refresh = false;
+        
+        PublisherEvents::beforePublish($refresh);
 
-        $event = PublisherEvents::publish($refresh);
+        PublisherEvents::publish($refresh);
 
-        PublisherEvents::beforePublish($event);
-
-        foreach($event->getOperations() as $operation)
-        {
-            $operation->run();
-        }
-
-        PublisherEvents::afterPublish($event);
+        PublisherEvents::afterPublish($refresh);
     }
 
 }

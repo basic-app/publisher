@@ -6,7 +6,7 @@
  */
 namespace BasicApp\Publisher\Events;
 
-class PublishEvent extends \BasicApp\Event\BaseEvent
+class BeforePublishEvent extends \BasicApp\Event\BaseEvent
 {
 
     public $refresh = false;

@@ -7,8 +7,8 @@
         }
     },
     "require": {
+        "basic-app/service": "*",
         "basic-app/console-logger": "*",
-        "basic-app/helper-logger": "*",
         "basic-app/event": "*",
         "basic-app/command": "*",
         "basic-app/curl": "*"
