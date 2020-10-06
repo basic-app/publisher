@@ -112,7 +112,7 @@ class PublisherService extends \BasicApp\Service\BaseService
         {
             if (is_link($path))
             {
-                $this->logger->error('PERMISSIONS: Can\'t set {permissions} permissions to symlink {path}.', [
+                $this->logger->error('SET PERMISSIONS: Can\'t set {permissions} permissions to symlink {path}.', [
                     'path' => $path,
                     'permissions' => $permissions
                 ]);
@@ -120,7 +120,7 @@ class PublisherService extends \BasicApp\Service\BaseService
                 return false;
             }
                 
-            $this->logger->error('PERMISSIONS: Can\'t set permissions {permissions} to {path}. Path not found.', [
+            $this->logger->error('SET PERMISSIONS: Can\'t set permissions {permissions} to {path}. Path not found.', [
                 'path' => $path,
                 'permissions' => $permissions
             ]);
@@ -130,7 +130,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!chmod($path, is_string($permissions) ? octdec($permissions) : $permissions))
         {
-            $this->logger->error('PERMISSIONS: {path} permissions {permissions} is not changed.', [
+            $this->logger->error('SET PERMISSIONS: {path} permissions {permissions} is not changed.', [
                 'path' => $path,
                 'permissions' => $permissions
             ]);
@@ -138,7 +138,7 @@ class PublisherService extends \BasicApp\Service\BaseService
             return false;
         }
 
-        $this->logger->info('PERMISSIONS: {permissions} was applied to {path}.', [
+        $this->logger->info('SET PERMISSIONS: {permissions} was applied to {path}.', [
             'path' => $path,
             'permissions' => $permissions
         ]);
@@ -230,7 +230,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if ($link === false)
         {
-            $this->logger->error('COPY: {source} readlink error.', [
+            $this->logger->error('COPY LINK: {source} readlink error.', [
                 'source' => $source,
                 'target' => $target
             ]);
@@ -240,7 +240,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!symlink($link, $target))
         {
-            $this->logger->error('COPY: {source} -> {target} symlink error.', [
+            $this->logger->error('COPY LINK: {source} -> {target} symlink error.', [
                 'source' => $source,
                 'target' => $target
             ]);
@@ -248,7 +248,7 @@ class PublisherService extends \BasicApp\Service\BaseService
             return false;
         }
 
-        $this->logger->info('{source} -> {target}', [
+        $this->logger->info('COPY LINK: {source} -> {target}.', [
             'source' => $source,
             'target' => $target
         ]);
