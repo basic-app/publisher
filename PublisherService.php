@@ -48,9 +48,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         $curl->setLogger($this->logger);
 
-        $overwrite = true;
-
-        if (!$curl->download($url, $target, $overwrite, $curlOptions))
+        if (!$curl->download($url, $target, $curlOptions))
         {
             return false;
         }
