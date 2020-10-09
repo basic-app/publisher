@@ -320,13 +320,21 @@ class PublisherService extends \BasicApp\Service\BaseService
         return $return;
     }
 
+    public function deleteIfExists(string $path)
+    {
+        if ($this->isExists($path))
+        {
+            return $this->delete($path);
+        }
+    }
+
     public function delete(string $path)
     {
-        if (is_file($path) || is_link($path))
+        if (is_file($path))
         {
-            if (!unlink($dir))
+            if (!unlink($path))
             {
-                $this->logger->error('Delete: {path} unlink error', [
+                $this->logger->error('Delete file: {path} unlink error', [
                     'path' => $path
                 ]);
 
@@ -336,7 +344,21 @@ class PublisherService extends \BasicApp\Service\BaseService
             return true;
         }
 
-        if (!is_dir($dir))
+        if (is_link($path))
+        {
+            if (!unlink($path))
+            {
+                $this->logger->error('Delete link: {path} unlink error', [
+                    'path' => $path
+                ]);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        if (!is_dir($path))
         {
             $this->logger->error('Delete: {path} not found', [
                 'path' => $path
@@ -371,7 +393,7 @@ class PublisherService extends \BasicApp\Service\BaseService
             return false;
         }
 
-        $this->logger->info('Delete: {path}', [
+        $this->logger->info('Delete directory: {path}', [
             'path' => $path
         ]);
 

@@ -40,9 +40,22 @@ class Publish extends \BasicApp\Command\BaseCommand
      */
     protected $usage = 'ba:publish';
 
+    protected $options = [
+        '-refresh' => 'Refresh assets'
+    ];
+
     public function run(array $params)
     {
-        $refresh = false;
+        $options = $this->request->getOptions();
+
+        if (array_key_exists('refresh', $options))
+        {
+            $refresh = true;
+        }
+        else
+        {
+            $refresh = false;
+        }
         
         PublisherEvents::beforePublish($refresh);
 
