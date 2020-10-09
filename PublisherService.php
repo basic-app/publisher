@@ -18,18 +18,23 @@ class PublisherService extends \BasicApp\Service\BaseService
         return is_file($path) || is_dir($path) || is_link($path);
     }
 
-    public function download(string $url, string $target, bool $overwrite = true, array $curlOptions = [])
+    public function downloadIfNotExists(string $url, string $target, array $curlOptions = [])
     {
-        if ($this->isExists($target) && !$overwrite)
+        if ($this->isExists($target))
         {
             $this->logger->debug('Download: {target} exists', [
                 'url' => $url,
                 'target' => $target
             ]);
 
-            return true;
+            return false;
         }
 
+        return $this->download($url, $target, $curlOptions);
+    }    
+
+    public function download(string $url, string $target, array $curlOptions = [])
+    {
         $permissions = '0755';
 
         $recursive = true;
@@ -42,6 +47,8 @@ class PublisherService extends \BasicApp\Service\BaseService
         $curl = service('curl');
 
         $curl->setLogger($this->logger);
+
+        $overwrite = true;
 
         if (!$curl->download($url, $target, $overwrite, $curlOptions))
         {
@@ -322,10 +329,16 @@ class PublisherService extends \BasicApp\Service\BaseService
 
     public function deleteIfExists(string $path)
     {
-        if ($this->isExists($path))
+        if (!$this->isExists($path))
         {
-            return $this->delete($path);
+            $this->logger->debug('Delete: {path} exists', [
+                'path' => $path
+            ]);
+
+            return false;
         }
+
+        return $this->delete($path);
     }
 
     public function delete(string $path)
