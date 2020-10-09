@@ -11,6 +11,4 @@ class AfterPublishEvent extends \BasicApp\Event\BaseEvent
 
     public $refresh = false;
 
-    public $publisher;
-
 }

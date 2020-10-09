@@ -7,6 +7,7 @@
 namespace BasicApp\Publisher\Config;
 
 use BasicApp\Publisher\PublisherService;
+use BasicApp\ConsoleLogger\ConsoleLogger;
 
 class Services extends \CodeIgniter\Config\BaseService
 {
@@ -15,7 +16,14 @@ class Services extends \CodeIgniter\Config\BaseService
     {
         if (!$getShared)
         {
-            return new PublisherService;
+            $return = new PublisherService;
+
+            if (is_cli())
+            {
+                $return->setLogger(new ConsoleLogger);
+            }
+
+            return $return;
         }
 
         return static::getSharedInstance(__FUNCTION__);

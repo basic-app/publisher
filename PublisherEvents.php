@@ -9,7 +9,6 @@ namespace BasicApp\Publisher;
 use BasicApp\Publisher\Events\PublishEvent;
 use BasicApp\Publisher\Events\BeforePublishEvent;
 use BasicApp\Publisher\Events\AfterPublishEvent;
-use BasicApp\ConsoleLogger\ConsoleLogger;
 
 class PublisherEvents extends \CodeIgniter\Events\Events
 {
@@ -26,10 +25,6 @@ class PublisherEvents extends \CodeIgniter\Events\Events
 
         $event->refresh = $refresh;
 
-        $event->publisher = service('publisher');
-
-        $event->publisher->setLogger(new ConsoleLogger);
-
         static::trigger(static::EVENT_PUBLISH, $event);
 
         return $event;
@@ -41,10 +36,6 @@ class PublisherEvents extends \CodeIgniter\Events\Events
 
         $event->refresh = $refresh;
 
-        $event->publisher = service('publisher');
-
-        $event->publisher->setLogger(new ConsoleLogger);
-
         static::trigger(static::EVENT_BEFORE_PUBLISH, $event);
 
         return $event;
@@ -55,10 +46,6 @@ class PublisherEvents extends \CodeIgniter\Events\Events
         $event = new AfterPublishEvent;
 
         $event->refresh = $refresh;
-
-        $event->publisher = service('publisher');
-
-        $event->publisher->setLogger(new ConsoleLogger);
 
         static::trigger(static::EVENT_AFTER_PUBLISH, $event);
 
