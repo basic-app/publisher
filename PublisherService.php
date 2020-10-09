@@ -352,6 +352,10 @@ class PublisherService extends \BasicApp\Service\BaseService
                 return false;
             }
 
+            $this->logger->info('Delete file: {path}', [
+                'path' => $path
+            ]);
+
             return true;
         }
 
@@ -365,6 +369,10 @@ class PublisherService extends \BasicApp\Service\BaseService
 
                 return false;
             }
+
+            $this->logger->info('Delete link: {path}', [
+                'path' => $path
+            ]);
 
             return true;
         }
@@ -384,6 +392,8 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         foreach(directory_map($path, 1, $hidden) as $file)
         {
+            $file = rtrim($file, DIRECTORY_SEPARATOR);
+
             if (!$this->delete($path . DIRECTORY_SEPARATOR . $file))
             {
                 $return = false;
