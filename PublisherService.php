@@ -22,7 +22,7 @@ class PublisherService extends \BasicApp\Service\BaseService
     {
         if ($this->isExists($target))
         {
-            $this->logger->debug('Download: {target} exists', [
+            $this->logger->debug('download: {target} exists', [
                 'url' => $url,
                 'target' => $target
             ]);
@@ -53,7 +53,7 @@ class PublisherService extends \BasicApp\Service\BaseService
             return false;
         }
 
-        $this->logger->info('Download: {url} -> {target}', [
+        $this->logger->info('download: {url} -> {target}', [
             'url' => $url,
             'target' => $target
         ]);
@@ -65,7 +65,7 @@ class PublisherService extends \BasicApp\Service\BaseService
     {
         if (!is_file($source))
         {
-            $this->logger->error('Unzip: {source} not found', [
+            $this->logger->error('unzip: {source} not found', [
                 'source' => $source
             ]);
 
@@ -76,7 +76,7 @@ class PublisherService extends \BasicApp\Service\BaseService
         
         if ($zip->open($source) !== true)
         {
-            $this->logger->error('Unzip: {source} open error', [
+            $this->logger->error('unzip: {source} open error', [
                 'source' => $source
             ]);
 
@@ -85,7 +85,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!$zip->extractTo($target, (count($entries) > 0) ? $entries : null))
         {
-            $this->logger->error('Unzip: {source} -> {target} extract error', [
+            $this->logger->error('unzip: {source} -> {target} extract error', [
                 'source' => $source,
                 'target' => $target
             ]);
@@ -95,14 +95,14 @@ class PublisherService extends \BasicApp\Service\BaseService
         
         if (!$zip->close())
         {
-            $this->logger->error('Unzip: {source} close error', [
+            $this->logger->error('unzip: {source} close error', [
                 'source' => $source
             ]);
 
             return false;
         }
 
-        $this->logger->info('Unzip: {source} -> {target}', [
+        $this->logger->info('unzip: {source} -> {target}', [
             'source' => $source,
             'target' => $target,
             'entries' => $entries
@@ -117,7 +117,7 @@ class PublisherService extends \BasicApp\Service\BaseService
         {
             if (is_link($path))
             {
-                $this->logger->error('Set permissions: Can\'t set to symlink {path}', [
+                $this->logger->error('chmod: Can\'t set to symlink {path}', [
                     'path' => $path,
                     'permissions' => $permissions
                 ]);
@@ -125,7 +125,7 @@ class PublisherService extends \BasicApp\Service\BaseService
                 return false;
             }
                 
-            $this->logger->error('Set permissions: Path not found {path}', [
+            $this->logger->error('chmod: Path not found {path}', [
                 'path' => $path,
                 'permissions' => $permissions
             ]);
@@ -135,7 +135,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!chmod($path, is_string($permissions) ? octdec($permissions) : $permissions))
         {
-            $this->logger->error('Set permissions: {path} chmod error', [
+            $this->logger->error('chmod: {path} chmod error', [
                 'path' => $path,
                 'permissions' => $permissions
             ]);
@@ -143,7 +143,7 @@ class PublisherService extends \BasicApp\Service\BaseService
             return false;
         }
 
-        $this->logger->info('Set permissions: {permissions} was applied to {path}', [
+        $this->logger->info('chmod: {permissions} was applied to {path}', [
             'path' => $path,
             'permissions' => $permissions
         ]);
@@ -157,7 +157,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if ($this->isExists($path))
         {
-            $this->logger->debug('Create directory: {path} exists', [
+            $this->logger->debug('mkdir: {path} exists', [
                 'path' => $path
             ]);
 
@@ -166,14 +166,14 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!mkdir($path, $permissions, $recursive))
         {
-            $this->logger->error('Create directory: {path} mkdir error', [
+            $this->logger->error('mkdir: {path} mkdir error', [
                 'path' => $path
             ]);
 
             return false;
         }
 
-        $this->logger->info('Create directory: {path}', [
+        $this->logger->info('mkdir: {path}', [
             'path' => $path
         ]);
 
@@ -196,7 +196,7 @@ class PublisherService extends \BasicApp\Service\BaseService
     {
         if (!$overwrite && $this->isExists($target))
         {
-            $this->logger->debug('Copy: {target} exists', [
+            $this->logger->debug('copy: {target} exists', [
                 'source' => $source,
                 'target' => $target,
                 'overwrite' => $overwrite
@@ -220,7 +220,7 @@ class PublisherService extends \BasicApp\Service\BaseService
             return $this->copyFile($source, $target);
         }
 
-        $this->logger->error('Copy: {source} not found', [
+        $this->logger->error('copy: {source} not found', [
             'source' => $source,
             'target' => $target,
             'overwrite' => $overwrite
@@ -235,7 +235,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if ($link === false)
         {
-            $this->logger->error('Copy link: {source} readlink error', [
+            $this->logger->error('symlink: {source} readlink error', [
                 'source' => $source,
                 'target' => $target
             ]);
@@ -245,7 +245,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!symlink($link, $target))
         {
-            $this->logger->error('Copy link: {source} -> {target} symlink error', [
+            $this->logger->error('symlink: {source} -> {target} symlink error', [
                 'source' => $source,
                 'target' => $target
             ]);
@@ -253,7 +253,7 @@ class PublisherService extends \BasicApp\Service\BaseService
             return false;
         }
 
-        $this->logger->info('Copy link: {source} -> {target}', [
+        $this->logger->info('symlink: {source} -> {target}', [
             'source' => $source,
             'target' => $target
         ]);
@@ -267,7 +267,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!$targetDirectory)
         {
-            $this->logger->error('Copy file: Can\'t get directory name from {source}', [
+            $this->logger->error('copy: Can\'t get directory name from {source}', [
                 'source' => $source
             ]);
 
@@ -281,7 +281,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!copy($source, $target))
         {
-            $this->logger->error('Copy file: {source} -> {target} copy error', [
+            $this->logger->error('copy: {source} -> {target} copy error', [
                 'source' => $source,
                 'target' => $target
             ]);
@@ -289,7 +289,7 @@ class PublisherService extends \BasicApp\Service\BaseService
             return false;
         }
 
-        $this->logger->info('Copy file: {source} -> {target}', [
+        $this->logger->info('copy: {source} -> {target}', [
             'source' => $source,
             'target' => $target
         ]);
@@ -329,7 +329,7 @@ class PublisherService extends \BasicApp\Service\BaseService
     {
         if (!$this->isExists($path))
         {
-            $this->logger->debug('Delete: {path} exists', [
+            $this->logger->debug('delete: {path} exists', [
                 'path' => $path
             ]);
 
@@ -345,14 +345,14 @@ class PublisherService extends \BasicApp\Service\BaseService
         {
             if (!unlink($path))
             {
-                $this->logger->error('Delete file: {path} unlink error', [
+                $this->logger->error('unlink: {path} error', [
                     'path' => $path
                 ]);
 
                 return false;
             }
 
-            $this->logger->info('Delete file: {path}', [
+            $this->logger->info('unlink: {path}', [
                 'path' => $path
             ]);
 
@@ -363,14 +363,14 @@ class PublisherService extends \BasicApp\Service\BaseService
         {
             if (!unlink($path))
             {
-                $this->logger->error('Delete link: {path} unlink error', [
+                $this->logger->error('unlink: {path} error', [
                     'path' => $path
                 ]);
 
                 return false;
             }
 
-            $this->logger->info('Delete link: {path}', [
+            $this->logger->info('unlink: {path}', [
                 'path' => $path
             ]);
 
@@ -379,7 +379,7 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!is_dir($path))
         {
-            $this->logger->error('Delete: {path} not found', [
+            $this->logger->error('delete: {path} not found', [
                 'path' => $path
             ]);
 
@@ -407,14 +407,14 @@ class PublisherService extends \BasicApp\Service\BaseService
 
         if (!rmdir($path))
         {
-            $this->logger->error('Delete: {path} rmdir error', [
+            $this->logger->error('rmdir: {path} error', [
                 'path' => $path
             ]);
 
             return false;
         }
 
-        $this->logger->info('Delete directory: {path}', [
+        $this->logger->info('rmdir: {path}', [
             'path' => $path
         ]);
 
