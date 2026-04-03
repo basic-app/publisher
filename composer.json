@@ -3,14 +3,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "BasicApp\\Publisher\\": ""
+            "BasicApp\\Publisher\\": "src/"
         }
-    },
-    "require": {
-        "basic-app/service": "*",
-        "basic-app/console-logger": "*",
-        "basic-app/event": "*",
-        "basic-app/command": "*",
-        "basic-app/curl": "*"
     }
 }
