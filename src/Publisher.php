@@ -7,6 +7,8 @@ namespace BasicApp\Publisher;
 
 use CodeIgniter\Publisher\Publisher as BasePublisher;
 use Config\Publisher as PublisherConfig;
+use Exception;
+use ZipArchive;
 
 class Publisher extends BasePublisher
 {
@@ -56,18 +58,8 @@ class Publisher extends BasePublisher
         {
             mkdir($dir, 0775, true);
         }
-    }
 
-    /**
-     * Delete files.
-     */
-    public function deleteFiles(string $dir)
-    {
-        helper(['filesystem']);
-
-        delete_files($dir, true, false, true);
-        
-        return true;
+        return $this;
     }
 
     public function directoryIsEmpty(string $dir) : bool
@@ -75,5 +67,43 @@ class Publisher extends BasePublisher
         helper(['filesystem']);
 
         return directory_map($dir, 0, true) ? false : true;
+    }
+
+    public function extractZip(string $filename, $files = null, $targetPath = null)
+    {
+        if (!$targetPath)
+        {
+            $targetPath = $this->getScratch();
+        }
+
+        $filename = self::resolveFile($this->getScratch() . $filename);
+
+        if (!is_file($filename))
+        {
+            throw new Exception('File not found: ' . $filename);
+        }
+
+        $zip = new ZipArchive;
+        
+        $res = $zip->open($filename);
+        
+        if ($res !== true)
+        {
+            throw new Exception('Open zip error: ' . $filename);
+        }
+
+        if (!$zip->extractTo($targetPath, $files))
+        {
+            throw new Exception('Extract zip error: ' . $filename);
+        }
+        
+        if (!$zip->close())
+        {
+            throw new ZipException('Close zip error: ' . $filename);
+        }
+
+        $this->removeFile($filename);
+
+        return $this;
     }
 }
