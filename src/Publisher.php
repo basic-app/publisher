@@ -29,7 +29,7 @@ class Publisher extends BasePublisher
     {
         if ($this->createDestination)
         {
-            $this->createDirectory($this->destination);
+            $this->createDir($this->destination);
         }
 
         if ($this->customRestrictions)
@@ -52,7 +52,7 @@ class Publisher extends BasePublisher
     /**
      * Create directory.
      */
-    public function createDirectory(string $dir)
+    public function createDir(string $dir)
     {
         if (!is_dir($dir))
         {
@@ -62,11 +62,18 @@ class Publisher extends BasePublisher
         return $this;
     }
 
-    public function directoryIsEmpty(string $dir) : bool
+    public function isEmpty(string $dir) : bool
     {
         helper(['filesystem']);
 
         return directory_map($dir, 0, true) ? false : true;
+    }
+
+    public function setSource(string $path)
+    {
+        $this->source = static::resolveDirectory($path);
+    
+        return $this;
     }
 
     public function extractZip(string $filename, $files = null, $targetPath = null)
