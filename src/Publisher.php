@@ -10,30 +10,70 @@ use Config\Publisher as PublisherConfig;
 
 class Publisher extends BasePublisher
 {
-    protected $fcpathRestrictions = null;
-
+    /**
+     * Tell Publisher where to create destination directory.
+     */
     protected $createDestination = false;
 
-    protected $destinationPermissions = 0755;
+    /**
+     * Custom restrictions.
+     */
+    protected $customRestrictions;
 
+    /**
+     * Loads the helper and verifies the source and destination directories.
+     */
     public function __construct(?string $source = null, ?string $destination = null)
-    {        
-        if (!is_dir($this->destination) && $this->createDestination)
+    {
+        if ($this->createDestination)
         {
-            mkdir($this->destination, $this->destinationPermissions, true);
+            $this->createDirectory($this->destination);
         }
 
-        $config = config(PublisherConfig::class);
-
-        $originalRestrictions = $config->restrictions[FCPATH];
-
-        if ($this->fcpathRestrictions)
+        if ($this->customRestrictions)
         {
-            $config->restrictions[FCPATH] = $this->fcpathRestrictions;
+            $config = config(PublisherConfig::class);
+
+            $restrictions = $config->restrictions[FCPATH];
+
+            $config->restrictions[FCPATH] = $this->customRestrictions;
         }
 
         parent::__construct($source, $destination);
+    
+        if ($this->customRestrictions)
+        {
+            $config->restrictions[FCPATH] = $restrictions;
+        }
+    }
 
-        $config->restrictions[FCPATH] = $originalRestrictions;
+    /**
+     * Create directory.
+     */
+    public function createDirectory(string $dir)
+    {
+        if (!is_dir($dir))
+        {
+            mkdir($dir, 0775, true);
+        }
+    }
+
+    /**
+     * Delete files.
+     */
+    public function deleteFiles(string $dir)
+    {
+        helper(['filesystem']);
+
+        delete_files($dir, true, false, true);
+        
+        return true;
+    }
+
+    public function directoryIsEmpty(string $dir) : bool
+    {
+        helper(['filesystem']);
+
+        return directory_map($dir, 0, true) ? false : true;
     }
 }
