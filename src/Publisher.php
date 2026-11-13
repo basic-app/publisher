@@ -109,6 +109,13 @@ class Publisher extends BasePublisher
             throw new ZipException('Close zip error: ' . $filename);
         }
 
+        return $this;
+    }
+
+    public function removeScratchFile(string $filename)
+    {
+        $filename = self::resolveFile($this->getScratch() . $filename);
+
         $this->removeFile($filename);
 
         return $this;
