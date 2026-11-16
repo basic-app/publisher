@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @author Basic App Dev Team
  * @license MIT
  */
+
 namespace BasicApp\Publisher;
 
 use CodeIgniter\Publisher\Publisher as BasePublisher;
@@ -28,13 +30,11 @@ class Publisher extends BasePublisher
      */
     public function __construct(?string $source = null, ?string $destination = null)
     {
-        if ($this->createDestination)
-        {
+        if ($this->createDestination) {
             $this->createDir($this->destination);
         }
 
-        if ($this->customRestrictions)
-        {
+        if ($this->customRestrictions) {
             $config = config(PublisherConfig::class);
 
             $restrictions = $config->restrictions[FCPATH];
@@ -43,9 +43,8 @@ class Publisher extends BasePublisher
         }
 
         parent::__construct($source, $destination);
-    
-        if ($this->customRestrictions)
-        {
+
+        if ($this->customRestrictions) {
             $config->restrictions[FCPATH] = $restrictions;
         }
     }
@@ -55,15 +54,14 @@ class Publisher extends BasePublisher
      */
     public function createDir(string $dir)
     {
-        if (!is_dir($dir))
-        {
+        if (!is_dir($dir)) {
             mkdir($dir, 0775, true);
         }
 
         return $this;
     }
 
-    public function isEmpty(string $dir) : bool
+    public function isEmpty(string $dir): bool
     {
         helper(['filesystem']);
 
@@ -73,40 +71,35 @@ class Publisher extends BasePublisher
     public function setSource(string $path)
     {
         $this->source = static::resolveDirectory($path);
-    
+
         return $this;
     }
 
     public function extractZip(string $filename, $files = null, $targetPath = null)
     {
-        if (!$targetPath)
-        {
+        if (!$targetPath) {
             $targetPath = $this->getScratch();
         }
 
         $filename = self::resolveFile($this->getScratch() . $filename);
 
-        if (!is_file($filename))
-        {
+        if (!is_file($filename)) {
             throw new Exception('File not found: ' . $filename);
         }
 
-        $zip = new ZipArchive;
-        
+        $zip = new ZipArchive();
+
         $res = $zip->open($filename);
-        
-        if ($res !== true)
-        {
+
+        if ($res !== true) {
             throw new Exception('Open zip error: ' . $filename);
         }
 
-        if (!$zip->extractTo($targetPath, $files))
-        {
+        if (!$zip->extractTo($targetPath, $files)) {
             throw new Exception('Extract zip error: ' . $filename);
         }
-        
-        if (!$zip->close())
-        {
+
+        if (!$zip->close()) {
             throw new ZipException('Close zip error: ' . $filename);
         }
 
