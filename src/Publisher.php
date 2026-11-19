@@ -92,15 +92,15 @@ class Publisher extends BasePublisher
         $res = $zip->open($filename);
 
         if ($res !== true) {
-            throw new Exception('Open zip error: ' . $filename);
+            throw new Exception('Can\'t open file: ' . $filename);
         }
 
-        if (!$zip->extractTo($targetPath, $files)) {
-            throw new Exception('Extract zip error: ' . $filename);
+        if ($zip->extractTo($targetPath, $files) === false) {
+            throw new Exception('Extracting zip archive failed: ' . $filename);
         }
 
-        if (!$zip->close()) {
-            throw new ZipException('Close zip error: ' . $filename);
+        if ($zip->close() === false) {
+            throw new Exception('Closing zip archive failed: ' . $filename);
         }
 
         return $this;
