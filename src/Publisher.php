@@ -18,12 +18,12 @@ class Publisher extends BasePublisher
     /**
      * Tell Publisher where to create destination directory.
      */
-    protected $createDestination = false;
+    protected bool $createDestination = false;
 
     /**
      * Custom restrictions.
      */
-    protected $customRestrictions;
+    protected ?string $customRestrictions = null;
 
     /**
      * Loads the helper and verifies the source and destination directories.
@@ -37,15 +37,17 @@ class Publisher extends BasePublisher
         if ($this->customRestrictions) {
             $config = config(PublisherConfig::class);
 
-            $restrictions = $config->restrictions[FCPATH];
+            $savedRestrictions = $config->restrictions[FCPATH];
 
             $config->restrictions[FCPATH] = $this->customRestrictions;
-        }
 
-        parent::__construct($source, $destination);
+            parent::__construct($source, $destination);
 
-        if ($this->customRestrictions) {
-            $config->restrictions[FCPATH] = $restrictions;
+            if ($this->customRestrictions) {
+                $config->restrictions[FCPATH] = $savedRestrictions;
+            }
+        } else {
+            parent::__construct($source, $destination);
         }
     }
 
